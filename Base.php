@@ -31,17 +31,23 @@ class Base
     private $invert;
 
     /**
-     * @var string
+     * @var string date in format «YYYY-MM-DD» ( Like 2015-03-05)
      */
-    public $strDate;
+    public $startDate;
+
+    /**
+     * @var string date in format «YYYY-MM-DD» ( Like 2015-03-05)
+     */
+    public $endDate;
 
     /**
      * Base constructor.
      * @param string $strDate
      */
-    public function __construct($strDate)
+    public function __construct($strDate, $endDate)
     {
         $this->strDate = $strDate;
+        $this->endDate = $endDate;
     }
 
     /**
