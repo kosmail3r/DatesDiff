@@ -125,12 +125,4 @@ class Base
         return $this->invert;
     }
 
-    /**
-     * @param bool $invert
-     */
-    public function setInvert($invert)
-    {
-        $this->invert = $invert;
-    }
-
 }
