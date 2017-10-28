@@ -11,43 +11,75 @@ class Base
     /**
      * @var integer
      */
-    private $years;
+    private $years = 0;
     /**
      * @var integer
      */
-    private $months;
+    private $months = 0;
     /**
      * @var integer
      */
-    private $days;
+    private $days = 0;
     /**
      * @var integer
      */
-    private $total_days;
+    private $totalDays = 0;
     /**
      * @var boolean
      * true if start date after ending date
      */
-    private $invert;
+    private $invert = false;
 
     /**
-     * @var string date in format «YYYY-MM-DD» ( Like 2015-03-05)
+     * @var array
      */
-    public $startDate;
+    public $startDateArray;
 
     /**
-     * @var string date in format «YYYY-MM-DD» ( Like 2015-03-05)
+     * @var array
      */
-    public $endDate;
+    public $endDateArray;
 
     /**
      * Base constructor.
      * @param string $strDate
      */
-    public function __construct($strDate, $endDate)
+    public function __construct(DateValidator $validateResult)
     {
-        $this->strDate = $strDate;
-        $this->endDate = $endDate;
+        $this->strDate = $validateResult['start'];
+        $this->endDate = $validateResult['end'];
+    }
+
+    public function getDiff()
+    {
+        $yearStart = (substr($this->strDate[0], 0, 4));
+        $monthStart = $this->strDate[1];
+        $dayStart = $this->strDate[2];
+
+        $yearEnd = (substr($this->endDate[0], 0, 4));
+        $monthEnd = $this->endDate[1];
+        $dayEnd = $this->endDate[2];
+
+        //check by invert range
+
+        if ($yearEnd < $yearStart ||
+            $yearEnd == $yearStart && $monthEnd < $monthStart ||
+            $yearEnd == $yearStart && $monthEnd == $monthStart && $dayEnd < $dayStart) {
+            $this->invert = true;
+        } else {
+            $this->years = $yearEnd - $yearStart;
+            if (!$this->years) {
+                $this->months = $monthEnd - $monthStart;
+                if (!$this->months) {
+                    $this->totalDays = $this->days = $dayEnd - $dayStart;
+                } else {
+
+                }
+            } else {
+
+            }
+        }
+
     }
 
     /**
@@ -58,13 +90,6 @@ class Base
         return $this->years;
     }
 
-    /**
-     * @param int $years
-     */
-    public function setYears($years)
-    {
-        $this->years = $years;
-    }
 
     /**
      * @return int
@@ -74,13 +99,6 @@ class Base
         return $this->months;
     }
 
-    /**
-     * @param int $months
-     */
-    public function setMonths($months)
-    {
-        $this->months = $months;
-    }
 
     /**
      * @return int
@@ -91,14 +109,6 @@ class Base
     }
 
     /**
-     * @param int $days
-     */
-    public function setDays($days)
-    {
-        $this->days = $days;
-    }
-
-    /**
      * @return int
      */
     public function getTotalDays()
@@ -106,13 +116,6 @@ class Base
         return $this->total_days;
     }
 
-    /**
-     * @param int $total_days
-     */
-    public function setTotalDays($total_days)
-    {
-        $this->total_days = $total_days;
-    }
 
     /**
      * @return bool
