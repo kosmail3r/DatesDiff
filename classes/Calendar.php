@@ -42,15 +42,27 @@ class Calendar
     {
         $daysCount = 0;
         if (!$toDate) $toDate = [12, 31];
+        $monthRange = range($fromDate[0], $toDate[0]);
         if ($fromDate[1] > 1) {
-            $daysCount += $fromDate[1] - $this->days[$fromDate[0]];
+            $daysCount += $this->days[$fromDate[0]] - $fromDate[1];
             $fromDate[1] = 1;
             $fromDate[0]++;
+            array_shift($monthRange);
         }
-        $monthRange = range($fromDate[0], $toDate[0]);
+        if ($toDate[1] != $this->days[$toDate[0]]) {
+            $daysCount += $toDate[1];
+            $toDate[0]--;
+            array_pop($monthRange);
+        }
         foreach ($monthRange as $month) {
             $daysCount += $this->days[$month];
         }
         return $daysCount;
+    }
+
+    public function getTotalMonthDays($month)
+    {
+        if (!in_array($month, $this->days)) return false;
+        return $this->days[$month];
     }
 }
