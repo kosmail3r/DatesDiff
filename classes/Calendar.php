@@ -8,7 +8,13 @@
 
 class Calendar
 {
+    /**
+     * @var int
+     */
     public $yearDays = 364;
+    /**
+     * @var array
+     */
     public $days = [
         1 => 31,    // Jun
         2 => 28,    // Feb
@@ -26,7 +32,7 @@ class Calendar
 
     /**
      * Calendar constructor. Checking year
-     * @param int $years
+     * @param int $year
      *
      */
     public function __construct($year)
@@ -38,6 +44,11 @@ class Calendar
         return $this->days;
     }
 
+    /**
+     * @param $fromDate (array) [ MM, DD ]
+     * @param bool $toDate or (array) [ MM, DD ]
+     * @return int|mixed
+     */
     public function getCountDays($fromDate, $toDate = false)
     {
         $daysCount = 0;
@@ -58,11 +69,5 @@ class Calendar
             $daysCount += $this->days[$month];
         }
         return $daysCount;
-    }
-
-    public function getTotalMonthDays($month)
-    {
-        if (!in_array($month, $this->days)) return false;
-        return $this->days[$month];
     }
 }

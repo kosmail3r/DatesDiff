@@ -43,8 +43,8 @@ class DateValidator
         $msg = ['success' => false];
         $validateStart = preg_match($this->regularPattern, $this->startDate, $src['start']);
         $validateEnd = preg_match($this->regularPattern, $this->endDate, $src['end']);
-        if (!$validateStart) $msg[] = 'Incorect start date format';
-        if (!$validateEnd) $msg[] = 'Incorect end date format';
+        if (!$validateStart) $msg['errors'][] = 'Incorect start date format';
+        if (!$validateEnd) $msg['errors'][] = 'Incorect end date format';
         return (count($msg) > 1) ? $msg : $src;
     }
 

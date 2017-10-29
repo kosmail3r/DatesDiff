@@ -6,7 +6,7 @@
  * Time: 1:28 AM
  */
 
-class Base
+class DateChecker
 {
     /**
      * @var integer
@@ -41,7 +41,7 @@ class Base
     public $endDateArray;
 
     /**
-     * Base constructor.
+     * DateChecker constructor.
      * @param string $strDate
      */
     public function __construct(array $validateResult)
@@ -50,6 +50,9 @@ class Base
         $this->endDate = $validateResult['end'];
     }
 
+    /**
+     * @return bool|DateBase
+     */
     public function getDiff()
     {
         $yearStart = (int)(substr($this->strDate[0], 0, 4));
@@ -66,35 +69,11 @@ class Base
             $yearEnd == $yearStart && $monthEnd < $monthStart ||
             $yearEnd == $yearStart && $monthEnd == $monthStart && $dayEnd < $dayStart) {
             $this->invert = true;
+            return false;
         } else {
             $this->years = $yearEnd - $yearStart;
             if (!$this->years) {
                 $this->monthsAndDaysCount([$monthStart, $dayStart], [$monthEnd, $dayEnd], $yearEnd);
-                /*$this->months = $monthEnd - $monthStart;
-                if (!$this->months) {
-                    $this->days = $dayEnd - $dayStart;
-                } else {
-                    //Days check
-                    if ($dayStart > $dayEnd) {
-                        $this->months--;
-                        $lastMonth = $monthStart + $this->months;
-                        if ($lastMonth > 12) $lastMonth -= 12;
-                        if (in_array($lastMonth, [1, 3, 5, 7, 8, 10, 12])) {
-                            $totalMonthDays = 31;
-                        } elseif (in_array($lastMonth, [4, 6, 9, 11])) {
-                            $totalMonthDays = 30;
-                        } elseif ($lastMonth == 2 && $dayEnd % 4 == 0) {
-                            $totalMonthDays = 29;
-                        } else {
-                            $totalMonthDays = 28;
-                        }
-                        $this->days = ($dayEnd + $totalMonthDays) - $dayStart;
-                    } else {
-                        $this->days = $dayEnd - $dayStart;
-                    }
-                }
-                $calendarData = new Calendar($yearEnd);
-                $this->totalDays = $calendarData->getCountDays([$monthStart, $dayStart], [$monthEnd, $dayEnd]);*/
             } else {
                 //split date range
                 $range = [];
@@ -116,6 +95,12 @@ class Base
         return new DateBase($this->years, $this->months, $this->days, $this->totalDays, $this->invert);
     }
 
+    /**
+     * @param $startDate (array) [ MM, DD ]
+     * @param $endDate (array) [ MM, DD ]
+     * @param $year (integer)
+     * @return DateBase
+     */
     private function monthsAndDaysCount($startDate, $endDate, $year)
     {
         $monthStart = $startDate[0];
@@ -131,19 +116,23 @@ class Base
             //Days check
             if ($dayStart > $dayEnd && !$monthsDiff) {
                 $monthsDiff--;
-                $lastMonth = $monthStart + $monthsDiff;
-                if ($lastMonth > 12) $lastMonth -= 12;
                 $daysDiff = $dayEnd - $dayStart;
-
             } else {
                 $monthsDiff--;
                 $totalStartMonthDays = $calendarData->days[$monthStart];
                 $daysDiff = $totalStartMonthDays - $dayStart + $dayEnd + 1;
+            }
+            if ($year % 4 === 0 && $monthStart == 2) $daysDiff++;
+            if ($daysDiff > 30) {
+                $daysDiff -= 31;
+                $monthsDiff++;
             }
         }
         $totalDays = $calendarData->getCountDays($startDate, $endDate);
         $this->months += $monthsDiff;
         $this->days += $daysDiff;
         $this->totalDays += $totalDays;
+
+        return new DateBase($this->years, $this->months, $this->days, $this->totalDays, $this->invert);
     }
 }
